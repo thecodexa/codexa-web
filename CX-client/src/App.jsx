@@ -1,9 +1,11 @@
-import Home from './Pages/home';
+import HomeLayout from "./layouts/HomeLayout";
+import { AuthProvider } from "./context/authContext";
 function App() {
-
   return (
-    <Home />
-  )
+    <AuthProvider>
+      <HomeLayout />;
+    </AuthProvider>
+  );
 }
 
 export default App;
