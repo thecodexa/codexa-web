@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import MonacoEditor from "react-monaco-editor";
-import {
-  Panel,
-  PanelGroup,
-  PanelResizeHandle,
-} from "react-resizable-panels";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import QuestionsDropdown from "../components/questionsdropdown";
+import "../index.css";
 
 export default function ProblemPage() {
   const [code, setCode] = useState(`class Solution {
@@ -24,11 +21,11 @@ public:
 
   return (
     // outer container: fixed full-screen and prevent body scrolling
-    <div className="h-screen bg-[#0D111A] text-white overflow-hidden flex flex-col">
+    <div className="h-screen bg-[#0D111A] text-white overflow-hidden flex flex-col fixed">
       {/* NAVBAR */}
       <nav className="bg-gray-900 flex items-center justify-between px-6 py-3 border-b border-gray-800">
         <div className="flex items-center space-x-6">
-          <span className="text-white text-2xl font-bold">CodeXa</span>
+          <span className="text-white text-4xl font-bold">codeXa</span>
 
           <QuestionsDropdown
             questions={[
@@ -37,7 +34,6 @@ public:
               "Question 3: Longest Substring Without Repeating Characters",
             ]}
           />
-
         </div>
 
         <div className="space-x-6 text-gray-300">
@@ -91,11 +87,21 @@ public:
                   </div> */}
 
                   <p className="text-gray-300 leading-relaxed mb-4">
-                    Given an array of integers <code className="bg-[#0F1720] px-1 rounded">nums</code> and an integer <code className="bg-[#0F1720] px-1 rounded">target</code>, return <em>indices of the two numbers such that they add up to target</em>.
+                    Given an array of integers{" "}
+                    <code className="bg-[#0F1720] px-1 rounded">nums</code> and
+                    an integer{" "}
+                    <code className="bg-[#0F1720] px-1 rounded">target</code>,
+                    return{" "}
+                    <em>
+                      indices of the two numbers such that they add up to target
+                    </em>
+                    .
                   </p>
 
                   <p className="text-gray-300 mb-6">
-                    You may assume that each input would have <strong>exactly one solution</strong>, and you may not use the same element twice.
+                    You may assume that each input would have{" "}
+                    <strong>exactly one solution</strong>, and you may not use
+                    the same element twice.
                   </p>
 
                   <h3 className="text-lg font-semibold mb-3">Example</h3>
@@ -107,7 +113,10 @@ Output: [0,1]`}
                   {/* filler: long description to test scroll (remove in production) */}
                   <div className="text-gray-300 space-y-2">
                     {Array.from({ length: 25 }).map((_, i) => (
-                      <p key={i}>Extra description line to test scrolling behavior. Line {i + 1}.</p>
+                      <p key={i}>
+                        Extra description line to test scrolling behavior. Line{" "}
+                        {i + 1}.
+                      </p>
                     ))}
                   </div>
                 </div>
@@ -146,7 +155,9 @@ Output: [0,1]`}
                       >
                         Run
                       </button>
-                      <button className="bg-gray-800 px-3 py-1 rounded text-sm">Submit</button>
+                      <button className="bg-gray-800 px-3 py-1 rounded text-sm">
+                        Submit
+                      </button>
                     </div>
                   </div>
 
@@ -156,7 +167,13 @@ Output: [0,1]`}
                       <MonacoEditor
                         width="100%"
                         height="100%"
-                        language={language === "cpp" ? "cpp" : language === "py" ? "python" : "javascript"}
+                        language={
+                          language === "cpp"
+                            ? "cpp"
+                            : language === "py"
+                            ? "python"
+                            : "javascript"
+                        }
                         theme="vs-dark"
                         value={code}
                         onChange={(val) => setCode(val)}
@@ -180,11 +197,19 @@ Output: [0,1]`}
                   {/* testcases header - tabs */}
                   <div className="px-4 py-2 border-b border-gray-800 flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <button className="px-3 py-1 rounded bg-gray-800 text-gray-200">Case 1</button>
-                      <button className="px-3 py-1 rounded text-gray-300 hover:bg-gray-800">Case 2</button>
-                      <button className="px-3 py-1 rounded text-gray-300 hover:bg-gray-800">Case 3</button>
+                      <button className="px-3 py-1 rounded bg-gray-800 text-gray-200">
+                        Case 1
+                      </button>
+                      <button className="px-3 py-1 rounded text-gray-300 hover:bg-gray-800">
+                        Case 2
+                      </button>
+                      <button className="px-3 py-1 rounded text-gray-300 hover:bg-gray-800">
+                        Case 3
+                      </button>
                     </div>
-                    <div className="ml-auto text-sm text-gray-400">Test Result</div>
+                    <div className="ml-auto text-sm text-gray-400">
+                      Test Result
+                    </div>
                   </div>
 
                   {/* testcases content: important -> overflow-y-auto + min-h-0 + overscroll-contain */}
@@ -196,13 +221,21 @@ Output: [0,1]`}
                       </div>
 
                       <div>
-                        <div className="text-xs text-gray-400 mb-1">Output:</div>
-                        <pre className="bg-black p-3 rounded text-green-300">{output || "—"}</pre>
+                        <div className="text-xs text-gray-400 mb-1">
+                          Output:
+                        </div>
+                        <pre className="bg-black p-3 rounded text-green-300">
+                          {output || "—"}
+                        </pre>
                       </div>
 
                       <div className="flex gap-2 mt-2">
-                        <button className="px-3 py-1 rounded bg-gray-800 text-gray-200">Run Case</button>
-                        <button className="px-3 py-1 rounded text-gray-300 hover:bg-gray-800">Edit Case</button>
+                        <button className="px-3 py-1 rounded bg-gray-800 text-gray-200">
+                          Run Case
+                        </button>
+                        <button className="px-3 py-1 rounded text-gray-300 hover:bg-gray-800">
+                          Edit Case
+                        </button>
                       </div>
                     </div>
                   </div>

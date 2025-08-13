@@ -5,3 +5,11 @@ body {
   overscroll-behavior: none;
   background-color: #0d111a;
 }
+
+.contest-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.contest-scroll {
+  scrollbar-color: var(--thumb-color) transparent; /* For Firefox */
+}
