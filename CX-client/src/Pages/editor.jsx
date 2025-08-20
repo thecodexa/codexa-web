@@ -28,7 +28,7 @@ public:
       {/* NAVBAR */}
       <nav className="bg-gray-900 flex items-center justify-between px-6 py-3 border-b border-gray-800">
         <div className="flex items-center space-x-6">
-          <span className="text-white text-2xl font-bold">CodeXa</span>
+          <span className="text-white text-2xl font-bold">codeXa</span>
 
           <QuestionsDropdown
             questions={[
