@@ -8,8 +8,8 @@ import { useAuth } from "../context/authContext";
 const Home = () => {
   const { setAuthType } = useAuth();
   return (
-    <div className="bg-[#0D111A] p-5">
-      <div className="bg-[#070B13] rounded-lg shadow-lg">
+    <div className="bg-[#0D111A] p-2 ">
+      <div className="bg-[#070B13] rounded-lg shadow-black shadow-md">
         <Navbar />
         <section className="flex flex-col-reverse [@media(min-width:910px)]:flex-row items-center justify-between px-10 md:px-20 py-12">
           <div className="max-w-xl">

@@ -2,9 +2,7 @@ import HomeLayout from "./layouts/HomeLayout";
 import { AuthProvider } from "./context/authContext";
 import ProblemPage from "./Pages/editor";
 import ProfilePage from "./Pages/Profilepage";
-import ContestRegisterPage from "./Pages/Contestregisterpage";
-import ContestsPage from "./Pages/contest";
-import { Home } from "lucide-react";
+import ContestsPage1 from "./Pages/contest1";
 function App() {
   return (
     <AuthProvider>
@@ -13,7 +11,8 @@ function App() {
       {/* <HomeLayout /> */}
       {/* <ContestRegisterPage /> */}
       {/* <HomeLayout />; */}
-      <ContestsPage />;{/* <ProblemPage />; */}
+      {/* <ContestsPage1 />; */}
+      {/* <ProblemPage />; */}
     </AuthProvider>
   );
 }

@@ -2,7 +2,7 @@ import { useAuth } from "../context/authContext";
 const Navbar = () => {
   const { setAuthType } = useAuth();
   return (
-    <nav className="flex sticky top-0 z-50 justify-between items-center p-6 bg-[#070B13] ">
+    <nav className="flex sticky top-0 z-50 justify-between items-center p-4 bg-[#070B13] ">
       <h1 className="text-white text-4xl font-bold">codeXa</h1>
       <div className="space-x-6 text-gray-300">
         {/* <a href="#">Features</a> */}
