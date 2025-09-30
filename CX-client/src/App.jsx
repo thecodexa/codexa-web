@@ -7,10 +7,10 @@ function App() {
   return (
     <AuthProvider>
       {/* <ProblemPage />; */}
-      <ProfilePage />
+      {/* <ProfilePage /> */}
       {/* <HomeLayout /> */}
       {/* <ContestRegisterPage /> */}
-      {/* <HomeLayout />; */}
+      <HomeLayout />;
       {/* <ContestsPage1 />; */}
       {/* <ProblemPage />; */}
     </AuthProvider>
