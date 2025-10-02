@@ -1,11 +1,48 @@
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/authContext";
 
 const LoginTile = () => {
   const [email, setEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { setAuthType } = useAuth();
+
+  // ✅ Google Sign-In Setup
+  useEffect(() => {
+    /* global google */
+    if (window.google) {
+      google.accounts.id.initialize({
+        client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+        hosted_domain: "juetguna.in", // restricts to @juetguna.in
+      });
+
+      google.accounts.id.renderButton(
+        document.getElementById("googleSignInDiv"),
+        { theme: "outline", size: "large", width: "100%" }
+      );
+    }
+  }, []);
+
+  const handleCredentialResponse = (response) => {
+    console.log("Encoded JWT ID token: " + response.credential);
+
+    // Send this token to your backend for verification
+    fetch("http://localhost:4000/auth/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: response.credential }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Backend response:", data);
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          window.location.href = "/dashboard"; // redirect after login
+        }
+      })
+      .catch((err) => console.error("Login failed:", err));
+  };
 
   const handleEmailChange = (e) => {
     let value = e.target.value.replace("@juetguna.in", ""); // Prevent duplicate domain
@@ -14,8 +51,8 @@ const LoginTile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const email = email + "@juetguna.in";
-    console.log("Logging in with:", email);
+    const fullEmail = email + "@juetguna.in";
+    console.log("Logging in with:", fullEmail);
     // Add your login logic here
   };
 
@@ -27,11 +64,14 @@ const LoginTile = () => {
       shadow-[0_0_20px_rgba(0,255,255,0.2)]"
     >
       {/* Glowing Codexa Title */}
-      <h1 className="text-5xl font-bold text-center mb-18 mt-5 text-cyan-400 drop-shadow-[0_0_8px_rgba(0,255,255,0.4)]">
+      <h1 className="text-5xl font-bold text-center mb-10 mt-5 text-cyan-400 drop-shadow-[0_0_8px_rgba(0,255,255,0.4)]">
         codeXa
       </h1>
 
-      {/* Login Form */}
+      {/* ✅ Google Sign-In Button */}
+      <div id="googleSignInDiv" className="mb-6 flex justify-center"></div>
+
+      {/* Login Form (manual) */}
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Email + Fixed Domain */}
         <div className="flex">
@@ -82,7 +122,7 @@ const LoginTile = () => {
           Sign In
         </button>
       </form>
-
+      
       {/* Forgot / Sign Up */}
       <div className="flex justify-between mt-4 text-sm">
         <a href="#" className="text-cyan-400 hover:underline">
@@ -99,7 +139,9 @@ const LoginTile = () => {
           Sign Up
         </a>
       </div>
+
     </div>
+    
   );
 };
 
