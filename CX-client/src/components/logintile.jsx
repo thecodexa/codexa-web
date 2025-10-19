@@ -1,47 +1,39 @@
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import { useAuth } from "../context/authContext";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom";
 
 const LoginTile = () => {
   const [email, setEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { setAuthType } = useAuth();
+  const navigate = useNavigate();
 
-  // ✅ Google Sign-In Setup
-  useEffect(() => {
-    /* global google */
-    if (window.google) {
-      google.accounts.id.initialize({
-        client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-        callback: handleCredentialResponse,
-        hosted_domain: "juetguna.in", // restricts to @juetguna.in
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const token = credentialResponse.credential;
+
+      const res = await fetch("http://localhost:4000/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
       });
 
-      google.accounts.id.renderButton(
-        document.getElementById("googleSignInDiv"),
-        { theme: "outline", size: "large", width: "100%" }
-      );
+      const data = await res.json();
+      console.log("Google Login Response:", data);
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        navigate("/"); // redirect to dashboard
+        setAuthType("none");
+      } else {
+        alert(data.message || "Login failed ❌");
+      }
+    } catch (err) {
+      console.error("Google login error:", err);
+      alert("Something went wrong with Google login.");
     }
-  }, []);
-
-  const handleCredentialResponse = (response) => {
-    console.log("Encoded JWT ID token: " + response.credential);
-
-    // Send this token to your backend for verification
-    fetch("http://localhost:4000/auth/google", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: response.credential }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Backend response:", data);
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          window.location.href = "/dashboard"; // redirect after login
-        }
-      })
-      .catch((err) => console.error("Login failed:", err));
   };
 
   const handleEmailChange = (e) => {
@@ -69,7 +61,14 @@ const LoginTile = () => {
       </h1>
 
       {/* ✅ Google Sign-In Button */}
-      <div id="googleSignInDiv" className="mb-6 flex justify-center"></div>
+      {/* <GoogleOAuthProvider clientId="129972455963-ha4nbotvupuvbpiegksn9j9gondvpfgo.apps.googleusercontent.com">
+        <div className="flex justify-center mb-6">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => alert("Google Sign-In failed")}
+          />
+        </div>
+      </GoogleOAuthProvider> */}
 
       {/* Login Form (manual) */}
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -139,9 +138,20 @@ const LoginTile = () => {
           Sign Up
         </a>
       </div>
+      <GoogleOAuthProvider clientId="129972455963-ha4nbotvupuvbpiegksn9j9gondvpfgo.apps.googleusercontent.com">
+        <div className="flex justify-center m-6">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => alert("Google Sign-In failed")}
+            theme="filled_black"
+            size="large"
+            shape="pill"
+            width="100%"
+          />
+        </div>
+      </GoogleOAuthProvider>
 
     </div>
-    
   );
 };
 
