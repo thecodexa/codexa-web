@@ -3,12 +3,15 @@ import { useState} from "react";
 import { useAuth } from "../context/authContext";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
+import React, { useContext } from "react";
+import { UserContext } from "../context/userContext";
 
 const LoginTile = () => {
   const [email, setEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { setAuthType } = useAuth();
   const navigate = useNavigate();
+  const { user, setUser } = useContext(UserContext);
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
@@ -27,6 +30,8 @@ const LoginTile = () => {
         localStorage.setItem("token", data.token);
         navigate("/"); // redirect to dashboard
         setAuthType("none");
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setUser(data.user);
       } else {
         alert(data.message || "Login failed ❌");
       }

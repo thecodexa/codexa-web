@@ -4,8 +4,11 @@ import laptop from "../assets/Laptop2.svg";
 import { Trophy, CalendarDays, ClipboardList } from "lucide-react";
 import LoginModal from "../components/loginModal";
 import HomeLayout from "../layouts/HomeLayout";
+import React, { useContext } from "react";
 import { useAuth } from "../context/authContext";
+import { UserContext } from "../context/userContext";
 const Home = () => {
+  const { user } = useContext(UserContext);
   const { setAuthType } = useAuth();
   return (
     <div className="bg-[#0D111A] p-2 ">
@@ -15,6 +18,7 @@ const Home = () => {
           <div className="max-w-xl">
             <h2 className="text-5xl md:text-7xl font-bold text-white mb-4">
               Coding Contests and Quizzes for Students
+
             </h2>
             <p className="text-[#E0E0E0] mb-6">
               Participate in programming contests, take quizzes, and join events
