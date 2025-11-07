@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Edit, User, Mail, Award } from "lucide-react";
+import Navbar from "../components/navbar";
 
 const ProfilePage = () => {
   const [user] = useState({
@@ -16,9 +17,7 @@ const ProfilePage = () => {
   return (
     <div className="bg-[#0D111A] min-h-screen text-white">
       {/* Navbar */}
-      <nav className="flex sticky top-0 z-50 justify-between items-center p-6 bg-[#070B13] shadow-md">
-        <h1 className="text-white text-2xl font-bold">codeXa</h1>
-      </nav>
+      <Navbar />
 
       {/* Profile Section */}
       <div className="p-6">

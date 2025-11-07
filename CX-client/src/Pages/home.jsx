@@ -18,7 +18,6 @@ const Home = () => {
           <div className="max-w-xl">
             <h2 className="text-5xl md:text-7xl font-bold text-white mb-4">
               Coding Contests and Quizzes for Students
-
             </h2>
             <p className="text-[#E0E0E0] mb-6">
               Participate in programming contests, take quizzes, and join events
@@ -44,16 +43,19 @@ const Home = () => {
               icon={Trophy}
               title="Contests"
               description="Test your coding knowledge"
+              to="/contests"
             />
             <HomeSectionCard
               icon={ClipboardList}
               title="Quizzes"
               description="Compete with peers and climb the leaderboard."
+              to="/contests"
             />
             <HomeSectionCard
               icon={CalendarDays}
               title="Events"
               description="Join college programming events"
+              to="/contests"
             />
           </section>
         </div>
