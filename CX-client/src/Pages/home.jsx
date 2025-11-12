@@ -23,12 +23,15 @@ const Home = () => {
               Participate in programming contests, take quizzes, and join events
               tailored for college.
             </p>
-            <button
-              className="bg-cyan-600 hover:bg-cyan-500 px-6 py-2 rounded text-white hover:shadow-[0_0_10px_rgba(0,255,255,0.4)] transition-all"
-              onClick={() => setAuthType("signup")}
-            >
-              Get Started
-            </button>
+
+            {!user && (
+              <button
+                className="bg-cyan-600 hover:bg-cyan-500 px-6 py-2 rounded text-white hover:shadow-[0_0_10px_rgba(0,255,255,0.4)] transition-all"
+                onClick={() => setAuthType("signup")}
+              >
+                Get Started
+              </button>
+            )}
           </div>
           <div className="mt-10 md:mt-0 flex-1 max-w-[40rem] min-w-[32rem]">
             <div className=" w-240px h-auto rounded-lg flex items-center justify-center">

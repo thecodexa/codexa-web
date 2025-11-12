@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import cors from "cors";
+import teacherRoutes from "./routes/teacherRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -15,6 +16,8 @@ app.use(cors({
 app.use(express.json());
 
 app.use("/auth", authRoutes);
+
+app.use("/teach", teacherRoutes);
 
 app.get("/", (req, res) => res.send("Codexa backend running ✅"));
 

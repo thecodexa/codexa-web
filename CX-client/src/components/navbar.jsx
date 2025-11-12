@@ -17,19 +17,25 @@ const Navbar = () => {
         <Link to="/contests">Contests</Link>
         <Link to="/about">About</Link>
         {user ? (
-          <div className="flex items-center space-x-4">
-            {/* Logout Button */}
-            <button
-              onClick={logout}
-              className="bg-gray-800 px-4 py-1 rounded hover:bg-cyan-500 hover:shadow-[0_0_10px_rgba(0,255,255,0.4)] transition-all"
-            >
-              Log Out
-            </button>
-            {/* Profile Icon / Name */}
-            <Link to="/profile" className="text-white">
-              {user.first_name}
-            </Link>
-          </div>
+          // <div className="flex items-center space-x-4">
+          //   {/* Logout Button */}
+          //   <button
+          //     onClick={logout}
+          //     className="bg-gray-800 px-4 py-1 rounded hover:bg-cyan-500 hover:shadow-[0_0_10px_rgba(0,255,255,0.4)] transition-all"
+          //   >
+          //     Log Out
+          //   </button>
+          //   {/* Profile Icon / Name */}
+          //   <Link to="/profile" className="text-white">
+          //     {user.first_name}
+          //   </Link>
+          // </div>
+          <Link
+            to="/profile"
+            className="w-8 h-8 rounded-full bg-gray-700 inline-flex items-center justify-center text-xl font-bold"
+          >
+            {user.first_name?.charAt(0).toUpperCase()}
+          </Link>
         ) : (
           <button
             onClick={() => setAuthType("login")}

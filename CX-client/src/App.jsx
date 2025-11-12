@@ -7,6 +7,8 @@ import ProfilePage from "./Pages/Profilepage";
 import ContestsPage1 from "./Pages/contest1";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Navigate } from "react-router-dom";
+import CreateContestPage from "./Pages/CreateContestPage";
+import CreateQuestionPage from "./Pages/CreateQuestionPage";
 
 function App() {
   return (
@@ -17,7 +19,8 @@ function App() {
             <Route path="/" element={<Navigate to="/home" replace />} />
 
             <Route path="/home" element={<HomeLayout />} />
-
+            <Route path="/create-contest" element={<CreateContestPage />} />
+            <Route path="/create-question" element={<CreateQuestionPage />} />
             <Route
               path="/profile"
               element={

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import Navbar from "../components/navbar";
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
+import { Link } from "react-router-dom";
 
 const data = {
   ongoing: [
@@ -81,6 +84,7 @@ const leaderboard = [
 
 export default function ContestsPage1() {
   const [tab, setTab] = useState("ongoing");
+  const { user } = useContext(UserContext);
 
   return (
     <div className="bg-[#0D111A] p-2 ">
@@ -126,20 +130,30 @@ export default function ContestsPage1() {
             {/* the list and tab section */}
             <div className="h-[780px] w-full md:w-3/4  bg-[#0C121E] rounded-lg shadow-lg">
               {/* tabs */}
-              <div className="flex w-full gap-4 px-4 py-2">
-                {["ongoing", "upcoming", "past"].map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setTab(t)}
-                    className={`w-32  p-2 rounded-md font-medium transition ${
-                      tab === t
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                    }`}
+              <div className="flex w-full items-center justify-between px-4 pr-8 py-2">
+                <div className="flex  gap-4 ">
+                  {["ongoing", "upcoming", "past"].map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setTab(t)}
+                      className={`w-32  p-2 rounded-md font-medium transition ${
+                        tab === t
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                      }`}
+                    >
+                      {t.charAt(0).toUpperCase() + t.slice(1)}
+                    </button>
+                  ))}
+                </div>
+                {user?.role === "teacher" && (
+                  <Link
+                    to="/create-contest"
+                    className="bg-cyan-600 hover:bg-cyan-500 px-4 py-2 rounded-md text-white font-medium hover:shadow-[0_0_10px_rgba(0,255,255,0.4)] transition-all"
                   >
-                    {t.charAt(0).toUpperCase() + t.slice(1)}
-                  </button>
-                ))}
+                    Create Contest
+                  </Link>
+                )}
               </div>
               {/* list */}
               <div className=" overflow-y-scroll px-4 py-2 space-y-4 ">
