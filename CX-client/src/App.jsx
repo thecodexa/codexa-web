@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { Navigate } from "react-router-dom";
 import CreateContestPage from "./Pages/CreateContestPage";
 import CreateQuestionPage from "./Pages/CreateQuestionPage";
+import ContestDetailsPage from "./Pages/ContestDetailsPage";
 
 function App() {
   return (
@@ -21,6 +22,10 @@ function App() {
             <Route path="/home" element={<HomeLayout />} />
             <Route path="/create-contest" element={<CreateContestPage />} />
             <Route path="/create-question" element={<CreateQuestionPage />} />
+            <Route
+              path="/contest/:contestId"
+              element={<ContestDetailsPage />}
+            />
             <Route
               path="/profile"
               element={
