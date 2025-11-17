@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import { UserContext } from "../context/userContext";
+import { toast } from "react-toastify";
 
 export default function ContestDetailsPage() {
   const { contestId } = useParams();
@@ -76,13 +77,12 @@ export default function ContestDetailsPage() {
       if (res.ok) {
         setIsRegistered(true);
         setRegistrationStatus("registered");
-        alert("You have successfully registered!");
         if (data.already_registered) {
-          // optionally notify user lightly
-          // toast: "You were already registered"
+          toast.info("You were already registered");
         } else {
-          // toast: "Registered successfully"
+          toast.success("You have successfully registered!");
         }
+        return true;
       } else {
         alert(data.error || "Failed to register");
       }
@@ -229,7 +229,15 @@ export default function ContestDetailsPage() {
           {/* ONGOING */}
           {status === "ongoing" && (
             <button
-              onClick={() => navigate(`/contest/${contestId}/problems`)}
+              onClick={async () => {
+                if (!isRegistered) {
+                  const ok = await handleRegister(); // <-- wait for registration to finish
+                  if (!ok) return; // if registration failed, stop navigation
+                }
+                navigate(
+                  `/contest/${contestId}/problem/${contest.questions[0].problem_id}`
+                );
+              }}
               className="px-6 py-2.5 rounded-lg font-medium bg-green-600 hover:bg-green-500"
             >
               Start Solving
@@ -237,9 +245,15 @@ export default function ContestDetailsPage() {
           )}
 
           {/* PAST */}
-          {status === "past" && (
+          {status === "past" && isRegistered && (
             <button className="px-6 py-2.5 rounded-lg font-medium bg-gray-700">
               View Results
+            </button>
+          )}
+
+          {status === "past" && !isRegistered && (
+            <button className="px-6 py-2.5 rounded-lg font-medium bg-gray-700">
+              Solve Virtual
             </button>
           )}
         </div>

@@ -70,12 +70,11 @@ export default function CreateContestPage() {
           description: q.description,
           difficulty: q.difficulty,
           max_score: q.max_score,
-          input_format: q.input_format,
-          output_format: q.output_format,
           starter_code: q.starter_code,
           full_solution: q.full_solution,
           test_harness: q.test_harness,
           test_cases: q.test_cases,
+          evaluation_cases: q.evaluation_cases,
         })),
       };
 

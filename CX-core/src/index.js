@@ -4,6 +4,10 @@ import authRoutes from "./routes/authRoutes.js";
 import cors from "cors";
 import teacherRoutes from "./routes/teacherRoutes.js";
 import contestRoutes from "./routes/contestRoutes.js";
+import problemRoutes from "./routes/problemRoutes.js";
+import runRoutes from "./routes/runRoutes.js";
+import submitRoutes from "./routes/submitRoutes.js";
+
 
 dotenv.config();
 const app = express();
@@ -21,6 +25,12 @@ app.use("/auth", authRoutes);
 app.use("/teach", teacherRoutes);
 
 app.use("/contests", contestRoutes);
+
+app.use("/problems", problemRoutes);
+
+app.use("/run", runRoutes);
+
+app.use("/submit", submitRoutes);
 
 app.get("/", (req, res) => res.send("Codexa backend running ✅"));
 

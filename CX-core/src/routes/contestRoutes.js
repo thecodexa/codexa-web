@@ -3,23 +3,6 @@ import pool from "../db.js"; // PostgreSQL pool connection
 
 const router = express.Router();
 
-//get all contest which a user with user_id is registered to
-router.get("/user/:userId/registrations", async (req, res) => {
-  const userId = Number(req.params.userId);
-
-  try {
-    const result = await pool.query(
-      "SELECT contest_id, status FROM contest_registrations WHERE user_id = $1",
-      [userId]
-    );
-
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Registration fetch error:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
 
 //create a contest with questions
 router.post("/create", async (req, res) => {
@@ -67,10 +50,9 @@ router.post("/create", async (req, res) => {
     if (Array.isArray(questions) && questions.length > 0) {
       const insertQuestionQuery = `
         INSERT INTO problems 
-          (contest_id, title, description, difficulty, max_score, input_format, 
-           output_format, starter_code, full_solution, test_harness, test_cases)
+          (contest_id, title, description, difficulty, max_score, starter_code, full_solution, test_harness, test_cases, evaluation_cases)
         VALUES 
-          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
+          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
       `;
 
       for (const q of questions) {
@@ -80,12 +62,11 @@ router.post("/create", async (req, res) => {
           q.description,
           q.difficulty,
           q.max_score,
-          q.input_format,
-          q.output_format,
           q.starter_code,
           q.full_solution,
           q.test_harness,
           JSON.stringify(q.test_cases),
+          JSON.stringify(q.evaluation_cases),
         ]);
       }
     }
@@ -161,7 +142,9 @@ router.get("/:id", async (req, res) => {
   [contestId]
 );
 
-
+if (contestResult.rows.length === 0) {
+  return res.status(404).json({ error: "Contest not found" });
+}
 const row = contestResult.rows[0];
 const contest = {...row,
       created_by: {
@@ -171,11 +154,10 @@ const contest = {...row,
       },};
       delete contest.first_name;
       delete contest.last_name;
-    if (!contest)
-      return res.status(404).json({ error: "Contest not found" });
+
 
     const questions = await pool.query(
-      "SELECT problem_id, title, difficulty, max_score FROM problems WHERE contest_id = $1",
+      "SELECT problem_id, title, difficulty, max_score FROM problems WHERE contest_id = $1 ORDER BY problem_id ASC",
       [contestId]
     );
 
@@ -227,6 +209,158 @@ router.post("/:id/register", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+// Get contest summary
+router.get("/:contestId/summary", async (req, res) => {
+  const contestId = Number(req.params.contestId);
+
+  try {
+    // contest base info
+    const contestQ = await pool.query(
+      `SELECT contest_id, title, description, start_time, end_time, total_marks
+       FROM contests
+       WHERE contest_id = $1`,
+      [contestId]
+    );
+
+    if (contestQ.rows.length === 0)
+      return res.status(404).json({ error: "Contest not found" });
+
+    // problems total + max score
+    const problemsQ = await pool.query(
+      `SELECT COUNT(*) AS total_problems,
+              COALESCE(SUM(max_score), 0) AS max_score
+       FROM problems
+       WHERE contest_id = $1`,
+      [contestId]
+    );
+
+    const contest = contestQ.rows[0];
+    const { total_problems, max_score } = problemsQ.rows[0];
+
+    return res.json({
+      ...contest,
+      total_problems: Number(total_problems),
+      max_score: Number(max_score),
+    });
+  } catch (err) {
+    console.error("Summary route error:", err);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Leaderboard for a contest
+router.get("/:contestId/leaderboard", async (req, res) => {
+  const contestId = Number(req.params.contestId);
+
+  try {
+    const lb = await pool.query(
+      `SELECT
+         u.user_id,
+         COALESCE(u.user_name, CONCAT(u.first_name, ' ', u.last_name)) AS username,
+         COALESCE(SUM(ups.best_score), 0) AS total_score,
+         COALESCE(MAX(ups.last_updated), to_timestamp(0)) AS last_activity
+       FROM users u
+       JOIN user_problem_scores ups
+         ON u.user_id = ups.user_id AND ups.contest_id = $1
+       GROUP BY u.user_id, username
+       ORDER BY total_score DESC, last_activity ASC`,
+      [contestId]
+    );
+
+    const rows = lb.rows.map((r, i) => ({
+      rank: i + 1,
+      user_id: r.user_id,
+      username: r.username,
+      total_score: Number(r.total_score),
+      last_activity: r.last_activity,
+    }));
+
+    return res.json(rows);
+  } catch (err) {
+    console.error("Leaderboard error:", err);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get detailed user performance in a contest
+router.get("/:contestId/user/:userId", async (req, res) => {
+  const contestId = Number(req.params.contestId);
+  const userId = Number(req.params.userId);
+
+  try {
+    const totalsQ = await pool.query(
+      `SELECT u.user_id,
+              COALESCE(SUM(ups.best_score), 0) AS total_score,
+              COALESCE(MAX(ups.last_updated), to_timestamp(0)) AS last_activity
+       FROM users u
+       JOIN user_problem_scores ups
+         ON ups.user_id = u.user_id AND ups.contest_id = $1
+       GROUP BY u.user_id`,
+      [contestId]
+    );
+
+    const totals = totalsQ.rows.map((r) => ({
+      user_id: r.user_id,
+      total_score: Number(r.total_score),
+      last_activity: r.last_activity,
+    }));
+
+    const userRow = totals.find((t) => t.user_id === userId) || {
+      total_score: 0,
+      last_activity: null,
+    };
+
+    const rank =
+      totals.filter((t) => {
+        if (t.total_score > userRow.total_score) return true;
+        if (t.total_score < userRow.total_score) return false;
+        return t.last_activity < userRow.last_activity;
+      }).length + 1;
+
+    const details = await pool.query(
+      `SELECT 
+         p.problem_id,
+         p.title,
+         p.max_score,
+         COALESCE(ups.best_score, 0) AS best_score,
+         COALESCE(ups.last_updated, NULL) AS last_updated,
+         COALESCE(s.attempts, 0) AS attempts
+       FROM problems p
+       LEFT JOIN user_problem_scores ups
+         ON ups.problem_id = p.problem_id
+        AND ups.user_id = $2
+        AND ups.contest_id = $1
+       LEFT JOIN (
+         SELECT problem_id, COUNT(*) AS attempts
+         FROM submissions
+         WHERE contest_id = $1 AND user_id = $2
+         GROUP BY problem_id
+       ) s ON s.problem_id = p.problem_id
+       WHERE p.contest_id = $1
+       ORDER BY p.problem_id`,
+      [contestId, userId]
+    );
+
+    return res.json({
+      user_id: userId,
+      total_score: userRow.total_score,
+      rank,
+      problems: details.rows.map((r) => ({
+        problem_id: r.problem_id,
+        title: r.title,
+        max_score: Number(r.max_score),
+        best_score: Number(r.best_score),
+        attempts: Number(r.attempts),
+        last_updated: r.last_updated,
+      })),
+    });
+  } catch (err) {
+    console.error("User detail error:", err);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 
 

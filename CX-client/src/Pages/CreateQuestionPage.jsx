@@ -8,19 +8,18 @@ export default function CreateQuestionPage() {
   const [question, setQuestion] = useState({
     title: "",
     description: "",
-    input_format: "",
-    output_format: "",
     rules: "",
     difficulty: "easy",
     max_score: "",
     test_cases: [{ input: "", output: "" }],
+    evaluation_cases: [{ input: "", output: "" }],
   });
 
   // Code Editors
   const [starter_code, setStarterCode] = useState(
     `class Solution {
 public:
-    vector<int> twoSum(vector<int>& nums, int target) {
+    int solve(int a, int b) {
         // your code here
     }
 };`
@@ -32,17 +31,16 @@ using namespace std;
 
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& nums, int target) {
-        // correct logic here
+    int solve(int a, int b) {
+        return a+b;
     }
 };
 
 int main() {
     Solution s;
-    vector<int> nums = {2,7,11,15};
-    int target = 9;
-    vector<int> ans = s.twoSum(nums, target);
-    for (auto x : ans) cout << x << " ";
+    int a,b;
+    cin>>a>>b;
+    cout<<s.solve(a,b);
     return 0;
 }`
   );
@@ -52,11 +50,10 @@ int main() {
 using namespace std;
 
 int main() {
-    Solution obj; // from student submission
-    vector<int> nums = {2,7,11,15};
-    int target = 9;
-    vector<int> ans = obj.twoSum(nums, target);
-    for (auto x : ans) cout << x << " ";
+    Solution s;
+    int a,b;
+    cin>>a>>b;
+    cout<<s.solve(a,b);
     return 0;
 }`
   );
@@ -90,13 +87,12 @@ int main() {
           description: question.description,
           difficulty: question.difficulty,
           max_score: Number(question.max_score),
-          input_format: question.input_format,
-          output_format: question.output_format,
           rules: question.rules,
           starter_code,
           full_solution,
           test_harness,
           test_cases: question.test_cases,
+          evaluation_cases: question.evaluation_cases,
         },
       ],
     };
@@ -176,34 +172,6 @@ int main() {
                     <option value="medium">Medium</option>
                     <option value="hard">Hard</option>
                   </select>
-                </div>
-
-                {/* Input Format */}
-                <div>
-                  <label className="block mb-2 text-gray-300 text-lg font-semibold">
-                    📥 Input Format
-                  </label>
-                  <textarea
-                    name="input_format"
-                    value={question.input_format}
-                    onChange={handleChange}
-                    className="w-full bg-gray-800 rounded-md px-3 py-2 focus:ring-2 focus:ring-cyan-500"
-                    rows="3"
-                  />
-                </div>
-
-                {/* Output Format */}
-                <div>
-                  <label className="block mb-2 text-gray-300 text-lg font-semibold">
-                    📤 Output Format
-                  </label>
-                  <textarea
-                    name="output_format"
-                    value={question.output_format}
-                    onChange={handleChange}
-                    className="w-full bg-gray-800 rounded-md px-3 py-2 focus:ring-2 focus:ring-cyan-500"
-                    rows="3"
-                  />
                 </div>
 
                 {/* Rules */}
@@ -294,6 +262,80 @@ int main() {
                     ))}
                   </div>
                 </div>
+
+                {/* Hidden Evaluation Cases */}
+                <div>
+                  <div className="flex justify-between items-center mb-3 mt-6">
+                    <h3 className="text-xl font-semibold text-red-400">
+                      🔒 Hidden Evaluation Cases
+                    </h3>
+                    <button
+                      onClick={() =>
+                        setQuestion((prev) => ({
+                          ...prev,
+                          evaluation_cases: [
+                            ...prev.evaluation_cases,
+                            { input: "", output: "" },
+                          ],
+                        }))
+                      }
+                      className="bg-red-600 hover:bg-red-500 px-3 py-1 rounded-md text-sm"
+                    >
+                      + Add Hidden
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {question.evaluation_cases.map((tc, i) => (
+                      <div
+                        key={i}
+                        className="bg-gray-800 p-3 rounded-md space-y-2 border border-red-700"
+                      >
+                        <h4 className="text-gray-300 font-medium mb-2">
+                          Hidden Case #{i + 1}
+                        </h4>
+
+                        <div>
+                          <label className="block text-xs text-gray-400 mb-1">
+                            Hidden Input:
+                          </label>
+                          <textarea
+                            value={tc.input}
+                            onChange={(e) => {
+                              const updated = [...question.evaluation_cases];
+                              updated[i].input = e.target.value;
+                              setQuestion({
+                                ...question,
+                                evaluation_cases: updated,
+                              });
+                            }}
+                            className="w-full bg-[#0B1220] rounded-md px-2 py-1 text-sm"
+                            rows="2"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs text-gray-400 mb-1">
+                            Hidden Expected Output:
+                          </label>
+                          <textarea
+                            value={tc.output}
+                            onChange={(e) => {
+                              const updated = [...question.evaluation_cases];
+                              updated[i].output = e.target.value;
+                              setQuestion({
+                                ...question,
+                                evaluation_cases: updated,
+                              });
+                            }}
+                            className="w-full bg-[#0B1220] rounded-md px-2 py-1 text-sm"
+                            rows="2"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </Panel>
@@ -304,36 +346,9 @@ int main() {
           <Panel defaultSize={52} minSize={30}>
             <PanelGroup direction="vertical">
               {/* Full Solution */}
-              <Panel defaultSize={33} minSize={20}>
-                <div className="flex flex-col h-full bg-[#0C121E] border-b border-gray-800">
-                  <div className="px-4 py-3 bg-gray-900 border-b border-gray-800">
-                    <h3 className="text-lg font-semibold text-cyan-400">
-                      🟩 Full Solution
-                    </h3>
-                  </div>
-                  <div className="flex-1 min-h-0">
-                    <MonacoEditor
-                      width="100%"
-                      height="100%"
-                      language="cpp"
-                      theme="vs-dark"
-                      value={full_solution}
-                      onChange={(val) => setFullSolutionCode(val)}
-                      options={{
-                        fontSize: 13,
-                        minimap: { enabled: false },
-                        wordWrap: "on",
-                        automaticLayout: true,
-                      }}
-                    />
-                  </div>
-                </div>
-              </Panel>
-
-              <PanelResizeHandle className="h-1 bg-gray-800 cursor-row-resize" />
 
               {/* Test Harness */}
-              <Panel defaultSize={33} minSize={20}>
+              <Panel defaultSize={50} minSize={20}>
                 <div className="flex flex-col h-full bg-[#0C121E] border-b border-gray-800">
                   <div className="px-4 py-3 bg-gray-900 border-b border-gray-800">
                     <h3 className="text-lg font-semibold text-cyan-400">
@@ -362,7 +377,7 @@ int main() {
               <PanelResizeHandle className="h-1 bg-gray-800 cursor-row-resize" />
 
               {/* Starter Code */}
-              <Panel defaultSize={33} minSize={20}>
+              <Panel defaultSize={50} minSize={20}>
                 <div className="flex flex-col h-full bg-[#0C121E]">
                   <div className="px-4 py-3 bg-gray-900 border-b border-gray-800">
                     <h3 className="text-lg font-semibold text-cyan-400">

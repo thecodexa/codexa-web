@@ -18,7 +18,7 @@ export default function ContestsPage1() {
   useEffect(() => {
     const fetchContests = async () => {
       try {
-        const res = await fetch("http://localhost:4000/contests"); // adjust to your backend route
+        const res = await fetch("http://localhost:4000/contests");
         const data = await res.json();
 
         const now = new Date();
@@ -184,7 +184,7 @@ export default function ContestsPage1() {
                           {action === "View Results" && (
                             <button
                               onClick={() =>
-                                navigate(`/contest/${c.contest_id}`)
+                                navigate(`/results/${c.contest_id}`)
                               }
                               className="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 font-medium"
                             >
