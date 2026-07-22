@@ -151,7 +151,7 @@ const LoginTile = () => {
             theme="filled_black"
             size="large"
             shape="pill"
-            width="100%"
+            width="300"
           />
         </div>
       </GoogleOAuthProvider>
